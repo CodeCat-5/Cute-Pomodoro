@@ -1,0 +1,108 @@
+import time
+import tkinter as tk
+from tkinter import *
+from tkinter import messagebox
+from PIL import Image, ImageTk
+
+root = tk.Tk()
+root.geometry("800x450")
+root.title("Cute Pomodoro")
+root.config(bg="#fee3ea")
+
+icon = tk.PhotoImage(file ="hello_kitty_bow_logo.png")
+root.iconphoto(False, icon)
+
+# Background 
+bg = Image.open("cr Gao Gao on Weibo.jpg").resize((200, 250), Image.LANCZOS)
+bg_photo = ImageTk.PhotoImage(bg)
+bg_label = Label(root, image=bg_photo, relief="flat", justify="center")
+bg_label.place(x=10, y=130)
+
+# Timer Label 
+timer_label = Label(root, text="00:00:00", font=("calibri", 80), fg="#fff1f1", bg="#fee3ea")
+timer_label.place_forget()
+
+# Text Label 
+textlabel = Label(root, text = "Let's Focus", width= 10, font = ("calibri", 60), fg= "#ea2727", bg= "#fee3ea" )
+textlabel.place(x= 225, y=10)
+
+
+HourString = StringVar(value="00")
+MinuteString = StringVar(value="00")
+SecondString = StringVar(value="00")
+clocktime = 0
+is_paused = False
+is_running = False
+
+# Entry styling
+entry_style = {"width": 2, "bg": "#fee3ea", "font": ("calibri", 80), "fg": "#ffffff", "relief": "flat", "justify": "center"}
+Hoursbox = Entry(root, textvariable=HourString, **entry_style)
+Minutesbox = Entry(root, textvariable=MinuteString, **entry_style)
+Secondsbox = Entry(root, textvariable=SecondString, **entry_style)
+Hoursbox.place(x=250, y=120)
+Minutesbox.place(x=370, y=120)
+Secondsbox.place(x=490, y=120)
+
+
+
+def update_timer():
+    global clocktime, is_running
+    if is_running and not is_paused:
+        if clocktime >= 0:
+            h, m = divmod(clocktime, 60)
+            hr, m = divmod(h, 60)
+            timer_label.config(text=f"{hr:02d}:{m:02d}:{clocktime % 60:02d}")
+            if clocktime == 0:
+                is_running = False
+            clocktime -= 1
+            root.after(1000, update_timer)
+
+def runtimer():
+    global is_running, is_paused, clocktime
+    is_running = True
+    is_paused = False
+    try:
+        clocktime = int(HourString.get()) * 3600 + int(MinuteString.get()) * 60 + int(SecondString.get())
+    except:
+        messagebox.showerror("Oops", "Please enter valid numbers.")
+        return
+    Hoursbox.place_forget()
+    Minutesbox.place_forget()
+    Secondsbox.place_forget()
+    timer_label.place(x=250, y=120)
+    update_timer()
+
+def pause_resume():
+    global is_paused
+    if is_running:
+        is_paused = not is_paused
+        PauseButton.config(text="Resume" if is_paused else "Pause")
+        if not is_paused:
+            update_timer()  # Resume the loop
+ 
+
+def reset_timer():
+    global is_running, clocktime
+    is_running = False
+    clocktime = 0
+    timer_label.place_forget()
+    Hoursbox.place(x=250, y=120)
+    Minutesbox.place(x=370, y=120)
+    Secondsbox.place(x=490, y=120)
+    HourString.set("00")
+    MinuteString.set("00")
+    SecondString.set("00")
+    PauseButton.config(text="Pause")
+
+# Button styling
+button_style = {"height": 2, "width": 10, "bg": "#ea2727", "fg": "white", "font": ("Calibri", 12, "bold"), "relief": "flat"}
+SetTimeButton = Button(root, text="Start", command=runtimer, **button_style)
+PauseButton = Button(root, text="Pause", command=pause_resume, **button_style)
+ResetButton = Button(root, text="Reset", command=reset_timer, **button_style)
+
+SetTimeButton.place(relx=0.56, rely=0.8, anchor=CENTER)
+PauseButton.place(relx=0.45, rely=0.8, anchor=CENTER)
+ResetButton.place(relx=0.67, rely=0.8, anchor=CENTER)
+
+root.mainloop()
+
