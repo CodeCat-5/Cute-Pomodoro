@@ -64,5 +64,8 @@ python cute_pomodoro_timer.py
 
 ## 🙇‍♀️ Author
 
-Made with love by **Codecat** 💕
-If you enjoy cute tools that help you stay focused, feel free to ⭐ the project or share it!
+This project was inspired by an tutorial from "NeuralNine" but I modified parts of the code, added custom design elements, and used it as practice to build my own version as a beginner.
+
+Made with ❤️ by Codecat
+
+If you liked this project, feel free to ⭐️ it or give feedback!
